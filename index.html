@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Person Search Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .search-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-group input {
+            margin-right: 5px;
+        }
+        button {
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #3367d6;
+        }
+        #results {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            display: none;
+        }
+        .result-item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .result-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 120px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Person Search Tool</h1>
+        
+        <form id="searchForm">
+            <div class="form-group">
+                <label for="personName">Person Name:</label>
+                <input type="text" id="personName" name="personName" placeholder="Enter full name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="company">Company (optional):</label>
+                <input type="text" id="company" name="company" placeholder="Enter company name if known">
+            </div>
+            
+            <div class="form-group">
+                <label>Search for:</label>
+                <div class="search-options">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="searchCompany" name="searchCompany" checked>
+                        <label for="searchCompany">Company</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="searchRole" name="searchRole" checked>
+                        <label for="searchRole">Role</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="searchWebsite" name="searchWebsite" checked>
+                        <label for="searchWebsite">Website</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="searchEmail" name="searchEmail" checked>
+                        <label for="searchEmail">Email</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="searchSocial" name="searchSocial" checked>
+                        <label for="searchSocial">Social Media</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="searchPhone" name="searchPhone" checked>
+                        <label for="searchPhone">Phone</label>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit">Search</button>
+        </form>
+        
+        <div id="results">
+            <h2>Search Results</h2>
+            <div id="resultsContent"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const personName = document.getElementById('personName').value;
+            const company = document.getElementById('company').value;
+            
+            // In a real application, you would send this data to your backend or API
+            // For now, let's just display some mock results
+            const mockResults = {
+                name: personName,
+                company: company || "XYZ Corp",
+                role: "Marketing Director",
+                website: "https://example.com",
+                email: personName.toLowerCase().replace(' ', '.') + "@example.com",
+                socialMedia: {
+                    linkedin: "https://linkedin.com/in/" + personName.toLowerCase().replace(' ', '-'),
+                    instagram: "https://instagram.com/" + personName.toLowerCase().replace(' ', '')
+                },
+                phone: "+1 (555) 123-4567"
+            };
+            
+            displayResults(mockResults);
+        });
+        
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            const resultsContent = document.getElementById('resultsContent');
+            
+            // Clear previous results
+            resultsContent.innerHTML = '';
+            
+            // Display new results
+            resultsContent.innerHTML += `
+                <div class="result-item"><span class="result-label">Name:</span> ${data.name}</div>
+                <div class="result-item"><span class="result-label">Company:</span> ${data.company}</div>
+                <div class="result-item"><span class="result-label">Role:</span> ${data.role}</div>
+                <div class="result-item"><span class="result-label">Website:</span> <a href="${data.website}" target="_blank">${data.website}</a></div>
+                <div class="result-item"><span class="result-label">Email:</span> <a href="mailto:${data.email}">${data.email}</a></div>
+                <div class="result-item"><span class="result-label">LinkedIn:</span> <a href="${data.socialMedia.linkedin}" target="_blank">${data.socialMedia.linkedin}</a></div>
+                <div class="result-item"><span class="result-label">Instagram:</span> <a href="${data.socialMedia.instagram}" target="_blank">${data.socialMedia.instagram}</a></div>
+                <div class="result-item"><span class="result-label">Phone:</span> ${data.phone}</div>
+            `;
+            
+            // Show results section
+            resultsDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
