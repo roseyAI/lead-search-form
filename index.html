@@ -137,7 +137,7 @@
     </div>
 
     <script>
-      document.getElementById('searchForm').addEventListener('submit', function(e) {
+   document.getElementById('searchForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
     // Get form values
@@ -170,49 +170,28 @@
     document.getElementById('resultsContent').innerHTML = '<p>Searching...</p>';
     document.getElementById('results').style.display = 'block';
     
-    // Send to n8n webhook
-    fetch('https://a2f.app.n8n.cloud/webhook-test/lead-searcher', {
-        method: 'POST',
+    // Send to n8n webhook - MAKE SURE METHOD IS POST
+    fetch('https://a2f.app.n8n.cloud/webhook/lead-searcher', {
+        method: 'POST', // This must be POST to match your webhook configuration
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(searchData)
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.status);
+        }
+        return response.json();
+    })
     .then(data => {
         displayResults(data);
     })
     .catch(error => {
-        document.getElementById('resultsContent').innerHTML = '<p>Error: Could not complete search</p>';
+        document.getElementById('resultsContent').innerHTML = '<p>Error: Could not complete search. ' + error.message + '</p>';
         console.error('Error:', error);
     });
 });
-
-function displayResults(data) {
-    const resultsContent = document.getElementById('resultsContent');
-    
-    // Clear previous results
-    resultsContent.innerHTML = '';
-    
-    if (!data || Object.keys(data).length === 0) {
-        resultsContent.innerHTML = '<p>No results found</p>';
-        return;
-    }
-    
-    // Display new results
-    if (data.name) resultsContent.innerHTML += `<div class="result-item"><span class="result-label">Name:</span> ${data.name}</div>`;
-    if (data.company) resultsContent.innerHTML += `<div class="result-item"><span class="result-label">Company:</span> ${data.company}</div>`;
-    if (data.role) resultsContent.innerHTML += `<div class="result-item"><span class="result-label">Role:</span> ${data.role}</div>`;
-    if (data.website) resultsContent.innerHTML += `<div class="result-item"><span class="result-label">Website:</span> <a href="${data.website}" target="_blank">${data.website}</a></div>`;
-    if (data.email) resultsContent.innerHTML += `<div class="result-item"><span class="result-label">Email:</span> <a href="mailto:${data.email}">${data.email}</a></div>`;
-    
-    if (data.socialMedia) {
-        if (data.socialMedia.linkedin) resultsContent.innerHTML += `<div class="result-item"><span class="result-label">LinkedIn:</span> <a href="${data.socialMedia.linkedin}" target="_blank">${data.socialMedia.linkedin}</a></div>`;
-        if (data.socialMedia.instagram) resultsContent.innerHTML += `<div class="result-item"><span class="result-label">Instagram:</span> <a href="${data.socialMedia.instagram}" target="_blank">${data.socialMedia.instagram}</a></div>`;
-    }
-    
-    if (data.phone) resultsContent.innerHTML += `<div class="result-item"><span class="result-label">Phone:</span> ${data.phone}</div>`;
-}
     </script>
 </body>
 </html>
